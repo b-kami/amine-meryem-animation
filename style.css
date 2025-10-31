@@ -9,14 +9,15 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
+    /* Soft pastel gradient background */
     background: linear-gradient(to bottom right, #ffebee, #e3f2fd);
     overflow: hidden;
 }
 
 .stage {
     position: relative;
-    width: 600px; /* Made stage wider for the characters */
-    height: 400px; /* Made stage taller */
+    width: 600px; /* Wider stage for the characters */
+    height: 400px; /* Taller stage */
     display: flex;
     justify-content: space-around;
     align-items: flex-end;
@@ -25,8 +26,8 @@ body {
 /* Base style for the person */
 .person {
     position: relative;
-    width: 250px; /* Width of the character */
-    height: 300px; /* Height of the character */
+    width: 250px; /* Width of the character image */
+    height: 300px; /* Height of the character image */
     transform-origin: bottom center;
 }
 
@@ -67,17 +68,12 @@ body {
 
 /* 2. Amine's image switches */
 #amine .character-image {
-    /* These filenames MUST match your images */
+    /* These filenames MUST be exact */
     animation: amine-face var(--anim-duration) infinite;
 }
 @keyframes amine-face {
-    /* From 0% to 35%, show the neutral image */
     0%, 35% { background-image: url('images/amine_neutral.png'); }
-    
-    /* From 36% to 65%, show the kissing image */
     36%, 65% { background-image: url('images/amine_kissing.png'); }
-    
-    /* From 66% to 100%, go back to neutral */
     66%, 100% { background-image: url('images/amine_neutral.png'); }
 }
 
@@ -95,7 +91,7 @@ body {
 
 /* 2. Meryem's image switches */
 #meryem .character-image {
-    /* These filenames MUST match your images */
+    /* These filenames MUST be exact */
     animation: meryem-face var(--anim-duration) infinite;
 }
 @keyframes meryem-face {
