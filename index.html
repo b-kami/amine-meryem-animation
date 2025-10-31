@@ -3,126 +3,287 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Amine + Meryem — I love you ❤️</title>
+  <title>Amine & Meryem — A romantic 3D scene</title>
+  <meta name="description" content="Realistic-looking 3D romantic scene (holding hands, hearts, I love you) — Three.js example for GitHub Pages" />
   <style>
-    :root{--bg:#0f172a;--accent:#ff6b81;--skin:#ffd8b5}
-    html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial}
-    body{display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 20% 10%, #11203a 0%, var(--bg) 50%);color:#fff}
-    .stage{width:920px;max-width:95%;min-height:520px;padding:32px;border-radius:20px;box-shadow:0 10px 40px rgba(2,6,23,0.6);background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));position:relative;overflow:hidden}
-
-    /* Heart confetti */
-    .heart{position:absolute;left:50%;top:40%;transform-origin:center;opacity:0}
-    .heart::before,.heart::after{content:'';position:absolute;width:22px;height:36px;background:var(--accent);border-radius:12px 12px 0 0;transform-origin:center}
-    .heart::before{transform:rotate(-45deg);left:11px}
-    .heart::after{transform:rotate(45deg);right:11px}
-
-    /* Couple */
-    .couple{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);display:flex;gap:24px;align-items:flex-end}
-    .person{width:180px;display:flex;flex-direction:column;align-items:center}
-    .neck{width:42px;height:36px;background:var(--skin);border-radius:10px;margin-top:18px}
-    .head{width:120px;height:120px;background:var(--skin);border-radius:50%;position:relative;display:flex;align-items:center;justify-content:center}
-    .hair{position:absolute;top:0;left:0;width:100%;height:54px;border-radius:50% 50% 30% 30%;background:#1f2937}
-    .shirt{width:160px;height:120px;background:#0ea5a0;border-radius:16px;margin-top:10px;display:flex;align-items:center;justify-content:center}
-
-    /* Amine leans right, Meryem leans left */
-    .amine{transform-origin:right bottom;animation:lean-amine 1.6s ease-in-out infinite alternate 0.4s}
-    .meryem{transform-origin:left bottom;animation:lean-meryem 1.6s ease-in-out infinite alternate}
-    .amine .shirt{background:#2563eb}
-    .meryem .shirt{background:#fb7185}
-    .meryem .hair{background:#4b5563;border-radius:60% 60% 20% 20%}
-
-    @keyframes lean-amine{0%{transform:translateY(0) rotate(0)}100%{transform:translateY(-6px) rotate(-12deg)}}
-    @keyframes lean-meryem{0%{transform:translateY(0) rotate(0)}100%{transform:translateY(-6px) rotate(12deg)}}
-
-    /* Kiss sparkle */
-    .kiss{position:absolute;left:50%;top:44%;transform:translateX(-50%);display:flex;gap:16px;align-items:center}
-    .dot{width:12px;height:12px;border-radius:50%;background:var(--accent);opacity:0;transform:translateY(0)}
-    @keyframes kiss-pop{0%{opacity:0;transform:scale(.6)}40%{opacity:1;transform:scale(1.1) translateY(-8px)}100%{opacity:0;transform:scale(.6) translateY(-28px)}}
-
-    /* Speech bubble */
-    .bubble{position:absolute;right:36px;top:36px;background:rgba(255,255,255,0.06);padding:12px 16px;border-radius:14px;backdrop-filter:blur(6px);max-width:260px}
-    .bubble p{margin:0;color:#fff;font-weight:600}
-    .bubble small{display:block;opacity:.7;font-size:12px;margin-top:6px}
-
-    /* footer controls */
-    .controls{position:absolute;left:20px;bottom:20px;color:#cbd5e1;font-size:14px}
-    button{background:transparent;border:1px solid rgba(255,255,255,0.08);color:inherit;padding:8px 12px;border-radius:10px;cursor:pointer}
-
-    /* small responsive */
-    @media (max-width:560px){.couple{flex-direction:row;gap:10px}.person{width:120px}.shirt{width:110px;height:90px}}
+    html,body{height:100%;margin:0}
+    body{font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:#0b1220;color:#fff}
+    #canvas-container{width:100%;height:100vh;display:block;overflow:hidden;position:relative}
+    .ui{position:absolute;left:16px;top:16px;z-index:10;background:rgba(0,0,0,0.35);backdrop-filter:blur(6px);padding:10px;border-radius:8px}
+    .ui button{background:transparent;border:1px solid rgba(255,255,255,0.08);color:#fff;padding:8px 10px;border-radius:8px;cursor:pointer}
+    .credit{position:absolute;right:16px;bottom:12px;font-size:13px;opacity:0.8}
   </style>
 </head>
 <body>
-  <div class="stage" role="main" aria-label="Animation Amine and Meryem">
-    <div class="bubble" id="bubble">
-      <p id="bubble-text">Amine whispers: "I love you, Meryem"</p>
-      <small>Auto-play voice: enabled</small>
-    </div>
-
-    <!-- hearts (decorative) -->
-    <div class="heart" style="left:40%;top:10%;width:30px;height:40px;animation:float 3s ease-in-out infinite;--accent:var(--accent)"></div>
-    <div class="heart" style="left:60%;top:8%;width:22px;height:30px;animation:float 2.6s ease-in-out .4s infinite;--accent:#ff9aa2"></div>
-    <div class="heart" style="left:70%;top:28%;width:18px;height:26px;animation:float 3.6s ease-in-out .8s infinite;--accent:#ff8fb0"></div>
-
-    <div class="couple" aria-hidden="false">
-      <div class="person amine" title="Amine">
-        <div class="head">
-          <div class="hair"></div>
-        </div>
-        <div class="neck"></div>
-        <div class="shirt">Amine</div>
-      </div>
-
-      <div class="person meryem" title="Meryem">
-        <div class="head">
-          <div class="hair"></div>
-        </div>
-        <div class="neck"></div>
-        <div class="shirt">Meryem</div>
-      </div>
-    </div>
-
-    <div class="kiss" aria-hidden="true">
-      <div class="dot" style="animation:kiss-pop 1.2s ease-in-out .8s infinite"></div>
-      <div class="dot" style="animation:kiss-pop 1.3s ease-in-out 1s infinite"></div>
-      <div class="dot" style="animation:kiss-pop 1.4s ease-in-out 1.2s infinite"></div>
-    </div>
-
-    <div class="controls">
-      <button id="play">🔊 Play voice</button>
-      <button id="stop">⏹ Stop</button>
-    </div>
+  <div id="canvas-container" aria-label="Romantic 3D scene"></div>
+  <div class="ui">
+    <button id="play-voice">🔊 Say "I love you"</button>
+    <button id="toggle-music">🎵 Toggle music</button>
+    <button id="reset">⤺ Reset camera</button>
   </div>
+  <div class="credit">Made with Three.js — holding-hands scene</div>
 
+  <!-- Three.js from unpkg CDN -->
+  <script src="https://unpkg.com/three@0.161.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.161.0/examples/js/controls/OrbitControls.js"></script>
   <script>
-    // Accessible speech with Web Speech API
-    const text = 'Amine says: I love you, Meryem.';
-    let utter;
-    function speak(){
-      if (!('speechSynthesis' in window)) return;
-      window.speechSynthesis.cancel();
-      utter = new SpeechSynthesisUtterance(text);
-      utter.lang = 'en-US';
-      // gentle voice preference
-      const voices = window.speechSynthesis.getVoices();
-      if (voices && voices.length) utter.voice = voices.find(v=>/female|woman|zira|amel/i.test(v.name)) || voices[0];
-      utter.rate = 0.95;utter.pitch = 1.05;utter.volume = 1;
-      window.speechSynthesis.speak(utter);
+    // Scene, camera, renderer
+    const container = document.getElementById('canvas-container');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 2000);
+    camera.position.set(0, 1.6, 3.8);
+
+    const renderer = new THREE.WebGLRenderer({antialias:true});
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    container.appendChild(renderer.domElement);
+
+    // Controls
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.target.set(0,1.4,0);
+    controls.enableDamping = true;
+    controls.minPolarAngle = Math.PI/6;
+    controls.maxPolarAngle = Math.PI/1.8;
+
+    // Lighting - warm key + cool fill
+    const hemi = new THREE.HemisphereLight(0xfff6e6, 0x40476b, 0.8);
+    scene.add(hemi);
+
+    const key = new THREE.DirectionalLight(0xffe6d6, 1.2);
+    key.position.set(2,3,1);
+    key.castShadow = true;
+    key.shadow.mapSize.set(2048,2048);
+    scene.add(key);
+
+    // Ground
+    const groundMat = new THREE.MeshStandardMaterial({color:0x0b1220, roughness:0.6, metalness:0.0});
+    const ground = new THREE.Mesh(new THREE.PlaneGeometry(20,20), groundMat);
+    ground.rotation.x = -Math.PI/2;
+    ground.position.y = 0.0;
+    scene.add(ground);
+
+    // Subtle environment: fake HDR using a gradient cube texture approximation
+    const ambColor = new THREE.Color(0x22283a);
+    scene.background = new THREE.Color(0x07101b);
+
+    // Helper: create a realistic-looking skin-like material
+    function skinMaterial(tone){
+      return new THREE.MeshPhysicalMaterial({
+        color: tone || 0xffd7b5,
+        roughness: 0.55,
+        metalness: 0.0,
+        clearcoat: 0.08,
+        clearcoatRoughness: 0.2
+      });
     }
 
-    document.getElementById('play').addEventListener('click', ()=>speak());
-    document.getElementById('stop').addEventListener('click', ()=>{ if (utter) window.speechSynthesis.cancel();});
+    // Simple realistic-ish human body built from smooth geometry (not photorealistic but soft realism)
+    function buildPerson({isMale=true, position=[0,0,0], name=''}){
+      const group = new THREE.Group();
+      group.position.set(...position);
 
-    // Auto-speak once when page loads (try/catch in case browser blocks autoplay)
-    window.addEventListener('load', ()=>{
-      try{ speak(); }catch(e){ /* ignore */ }
+      // torso
+      const torsoGeo = new THREE.CapsuleGeometry(0.22, 0.6, 8, 16);
+      const torsoMat = new THREE.MeshPhysicalMaterial({color: isMale?0x2548b3:0xfb8aa0, roughness:0.6, metalness:0.05, clearcoat:0.05});
+      const torso = new THREE.Mesh(torsoGeo, torsoMat);
+      torso.position.y = 1.05;
+      torso.castShadow = true;
+      group.add(torso);
+
+      // neck + head
+      const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.08,0.18,16), skinMaterial());
+      neck.position.y = 1.55;
+      group.add(neck);
+      const head = new THREE.Mesh(new THREE.SphereGeometry(0.185,32,32), skinMaterial());
+      head.position.y = 1.82;
+      head.castShadow = true;
+      group.add(head);
+
+      // hair (simple cap)
+      const hair = new THREE.Mesh(new THREE.SphereGeometry(0.193,24,24,0,Math.PI*2,0,Math.PI*0.65), new THREE.MeshStandardMaterial({color:isMale?0x1f2937:0x3f3d56, roughness:0.45}));
+      hair.position.y = 1.88;
+      hair.scale.set(1,0.95,1);
+      group.add(hair);
+
+      // arms
+      const armGeo = new THREE.CylinderGeometry(0.06,0.07,0.56,12);
+      const leftArm = new THREE.Mesh(armGeo, skinMaterial());
+      const rightArm = new THREE.Mesh(armGeo, skinMaterial());
+      leftArm.position.set(-0.28,1.25,0);
+      leftArm.rotation.z = Math.PI/8;
+      rightArm.position.set(0.28,1.25,0);
+      rightArm.rotation.z = -Math.PI/8;
+      group.add(leftArm); group.add(rightArm);
+
+      // legs
+      const legGeo = new THREE.CylinderGeometry(0.09,0.11,0.9,12);
+      const leftLeg = new THREE.Mesh(legGeo, new THREE.MeshPhysicalMaterial({color:0x111215, roughness:0.7}));
+      const rightLeg = leftLeg.clone();
+      leftLeg.position.set(-0.12,0.45,0);
+      rightLeg.position.set(0.12,0.45,0);
+      group.add(leftLeg); group.add(rightLeg);
+
+      // simple name tag
+      if(name){
+        const canvas = document.createElement('canvas');
+        canvas.width = 256; canvas.height = 64;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = 'rgba(255,255,255,0.92)'; ctx.font = '28px sans-serif'; ctx.textAlign='center';
+        ctx.fillText(name, 128, 42);
+        const tex = new THREE.CanvasTexture(canvas);
+        const plane = new THREE.Mesh(new THREE.PlaneGeometry(0.9,0.22), new THREE.MeshBasicMaterial({map:tex,transparent:true}));
+        plane.position.set(0,0.18,0.25);
+        plane.rotation.x = -0.15;
+        group.add(plane);
+      }
+
+      return group;
+    }
+
+    // Create characters
+    const amine = buildPerson({isMale:true, position:[-0.45,0,0], name:'Amine'});
+    const meryem = buildPerson({isMale:false, position:[0.45,0,0], name:'Meryem'});
+    scene.add(amine, meryem);
+
+    // Pose them holding hands: create small spheres for hands and a connecting heart animation
+    function addHandConnection(a, b){
+      // compute approximate hand positions in world space
+      const aHand = new THREE.Vector3(-0.12,1.15,0.18).add(a.position);
+      const bHand = new THREE.Vector3(0.12,1.15,0.18).add(b.position);
+
+      // small spheres to represent hands
+      const handGeo = new THREE.SphereGeometry(0.05,16,16);
+      const handMat = skinMaterial();
+      const h1 = new THREE.Mesh(handGeo, handMat); h1.position.copy(aHand);
+      const h2 = new THREE.Mesh(handGeo, handMat); h2.position.copy(bHand);
+      scene.add(h1,h2);
+
+      // connecting ribbon (tube)
+      const curve = new THREE.LineCurve3(aHand, bHand);
+      const pts = curve.getPoints(20);
+      const geom = new THREE.BufferGeometry().setFromPoints(pts);
+      const line = new THREE.Line(geom, new THREE.LineBasicMaterial({color:0xff7aa2, linewidth:3, opacity:0.9}));
+      scene.add(line);
+
+      return {h1,h2,line,aHand,bHand};
+    }
+
+    const connection = addHandConnection(amine, meryem);
+
+    // Floating heart between them
+    const heartShape = new THREE.Shape();
+    heartShape.moveTo(0,0.25);
+    heartShape.bezierCurveTo(0,0.25,-0.22,0.0,-0.5,-0.15);
+    heartShape.bezierCurveTo(-1.05,-0.6,-0.4,-1.15,0, -0.5);
+    heartShape.bezierCurveTo(0.4,-1.15,1.05,-0.6,0.5,-0.15);
+    heartShape.bezierCurveTo(0.22,0.0,0,0.25,0,0.25);
+    const extrudeSettings = {depth:0.06,bevelEnabled:true,bevelSegments:2,steps:2,bevelSize:0.03,bevelThickness:0.02};
+    const heartGeo = new THREE.ExtrudeGeometry(heartShape, extrudeSettings);
+    heartGeo.computeVertexNormals();
+    const heartMat = new THREE.MeshPhysicalMaterial({color:0xff3860,roughness:0.35,metalness:0.05,clearcoat:0.2});
+    const heart = new THREE.Mesh(heartGeo, heartMat);
+    heart.scale.set(0.25,0.25,0.25);
+    heart.position.copy(connection.aHand).lerp(connection.bHand, 0.5).add(new THREE.Vector3(0,0.14,0));
+    heart.rotation.x = Math.PI;
+    scene.add(heart);
+
+    // Tiny sparkles around heart
+    const sparkleGeo = new THREE.SphereGeometry(0.02,8,8);
+    const sparkleMat = new THREE.MeshBasicMaterial({color:0xffd4e0});
+    const sparkles = new THREE.Group();
+    for(let i=0;i<8;i++){
+      const s = new THREE.Mesh(sparkleGeo, sparkleMat);
+      const angle = (i/8)*Math.PI*2;
+      s.position.set(Math.cos(angle)*0.18, 0.08+Math.sin(angle)*0.05, Math.sin(angle)*0.08);
+      sparkles.add(s);
+    }
+    heart.add(sparkles);
+
+    // Animation parameters
+    let clock = new THREE.Clock();
+
+    function animate(){
+      requestAnimationFrame(animate);
+      const t = clock.getElapsedTime();
+
+      // subtle breathing for torso
+      [amine, meryem].forEach((p, idx)=>{
+        const scale = 1 + Math.sin(t*1.6 + idx)*0.007;
+        p.children.forEach(c=>{ if(c.geometry && c.geometry.type.includes('Capsule')) c.scale.y = scale; });
+      });
+
+      // hands slight movement
+      connection.h1.position.y = connection.aHand.y + Math.sin(t*2.1)*0.007;
+      connection.h2.position.y = connection.bHand.y + Math.cos(t*2.2)*0.007;
+
+      // heart float & rotate
+      heart.position.y = connection.aHand.y + 0.14 + Math.sin(t*1.8)*0.03;
+      heart.rotation.z = Math.sin(t*0.8)*0.2;
+
+      // sparkles
+      sparkles.children.forEach((s, i)=>{
+        s.scale.setScalar(0.9 + 0.2*Math.sin(t*3 + i));
+      });
+
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    // Resize handling
+    window.addEventListener('resize', ()=>{
+      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(container.clientWidth, container.clientHeight);
     });
 
-    // Tiny decorative floating for hearts
-    const hearts = document.querySelectorAll('.heart');
-    hearts.forEach((h,i)=>{
-      h.style.setProperty('animation','float '+(3+Math.random()*2)+'s ease-in-out '+(i*0.2)+'s infinite');
+    // Simple ambient looped music (generated client-side using oscillator) — optional
+    let audioCtx, musicOsc;
+    let musicOn = false;
+    function toggleMusic(){
+      if(!audioCtx){ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+      if(!musicOn){
+        musicOsc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        musicOsc.type = 'sine';
+        musicOsc.frequency.setValueAtTime(220, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
+        musicOsc.connect(gain); gain.connect(audioCtx.destination);
+        musicOsc.start();
+        musicOn = true;
+      } else {
+        if(musicOsc) musicOsc.stop();
+        musicOn = false;
+      }
+    }
+
+    document.getElementById('toggle-music').addEventListener('click', ()=>{
+      toggleMusic();
     });
+
+    // Speech synthesis
+    const speechText = 'Amine loves you, Meryem. I love you.';
+    document.getElementById('play-voice').addEventListener('click', ()=>{
+      if(!('speechSynthesis' in window)) return alert('Speech synthesis not supported in this browser.');
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(speechText);
+      u.lang = 'en-US'; u.rate = 0.95; u.pitch = 1.05; u.volume = 1;
+      const voices = window.speechSynthesis.getVoices();
+      if(voices && voices.length) u.voice = voices.find(v=>/female|woman|zira|amel/i.test(v.name)) || voices[0];
+      window.speechSynthesis.speak(u);
+    });
+
+    // Camera reset
+    document.getElementById('reset').addEventListener('click', ()=>{
+      camera.position.set(0,1.6,3.8); controls.target.set(0,1.4,0); controls.update();
+    });
+
+    // Accessibility: reduce motion if requested
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if(media.matches){ clock = { getElapsedTime: () => 0 }; }
+
   </script>
 </body>
 </html>
