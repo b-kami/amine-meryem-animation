@@ -3,30 +3,338 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amine & Meryem: A Cute Kiss!</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Amine & Meryem: CSS-Only Animation</title>
+
+    <style>
+        :root {
+            /* --- Character Colors --- */
+            --skin-tone: #fcd5b9;
+            --amine-hair: #222;
+            --amine-thobe: #f1f1f1; /* Light grey thobe */
+            --thobe-border: #ccc;
+            --meryem-hijab: #ff80ab; /* Pink hijab */
+            --meryem-shirt: #ff80ab; /* Matching pink shirt */
+            --eye-color: #4a148c; /* Purple */
+            
+            /* --- Animation Timing --- */
+            --anim-duration: 4s;
+        }
+
+        /* --- 1. Scene Setup --- */
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(to bottom right, #ffebee, #e3f2fd);
+            overflow: hidden;
+        }
+
+        .stage {
+            position: relative;
+            width: 450px;
+            height: 300px;
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+        }
+
+        .person {
+            position: relative;
+            width: 100px;
+            height: 200px;
+            transform-origin: bottom center;
+        }
+
+        .person::before {
+            content: attr(data-name);
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #424242;
+        }
+
+        /* --- 2. Drawing the Characters with CSS --- */
+
+        .head {
+            width: 70px;
+            height: 80px;
+            background-color: var(--skin-tone);
+            border-radius: 50% 50% 45% 45% / 60% 60% 40% 40%;
+            position: absolute;
+            left: 15px;
+            top: 0;
+            border: 2px solid #555;
+            z-index: 10;
+        }
+
+        .body {
+            width: 80px;
+            height: 110px;
+            position: absolute;
+            top: 70px;
+            left: 10px;
+            border: 2px solid #555;
+            border-radius: 10px 10px 0 0;
+            z-index: 5;
+        }
+
+        /* --- Drawing Amine --- */
+        #amine .hair {
+            position: absolute;
+            top: -10px;
+            left: -2px;
+            width: 74px;
+            height: 40px;
+            background: var(--amine-hair);
+            border-radius: 40px 40px 10px 10px;
+            border: 2px solid #555;
+            z-index: 11;
+        }
+        
+        #amine .body {
+            background-color: var(--amine-thobe);
+            border-color: var(--thobe-border);
+            height: 125px; /* Thobe is longer */
+        }
+
+        /* --- Drawing Meryem --- */
+        #meryem .hijab {
+            position: absolute;
+            top: -10px;
+            left: -8px;
+            width: 86px;
+            height: 120px;
+            background-color: var(--meryem-hijab);
+            border: 2px solid #555;
+            border-radius: 50% 50% 20% 20%; /* Hijab shape */
+            z-index: 9; /* Sits behind the face */
+        }
+        
+        #meryem .body {
+            background-color: var(--meryem-shirt);
+            border-color: #555;
+        }
+
+        /* --- Drawing Facial Features --- */
+        .eye {
+            width: 16px;
+            height: 20px;
+            background-color: #fff;
+            border: 1px solid #555;
+            border-radius: 50%;
+            position: absolute;
+            top: 30px;
+            z-index: 12;
+            overflow: hidden; /* Hides the eyelid */
+        }
+        .eye.left { left: 15px; }
+        .eye.right { right: 15px; }
+
+        .eye::after { /* The pupil */
+            content: '';
+            width: 10px;
+            height: 10px;
+            background-color: var(--eye-color);
+            border-radius: 50%;
+            position: absolute;
+            top: 5px;
+            left: 3px;
+        }
+
+        .eyelid {
+            width: 100%;
+            height: 0%; /* Starts 0% (open) */
+            background-color: var(--skin-tone);
+            border-bottom: 2px solid #555;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 13;
+            animation: eye-blink var(--anim-duration) ease-in-out infinite;
+        }
+
+        .mouth {
+            width: 25px;
+            height: 5px;
+            border: 2px solid #555;
+            border-top: none;
+            border-radius: 0 0 15px 15px; /* Smile */
+            position: absolute;
+            bottom: 15px;
+            left: 22px;
+            z-index: 12;
+            animation: mouth-kiss var(--anim-duration) ease-in-out infinite;
+        }
+
+        /* --- 3. Drawing the Effects --- */
+
+        .smooch-text {
+            position: absolute;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ef5350;
+            opacity: 0;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%) scale(0.5);
+            animation: smooch-pop var(--anim-duration) ease-in-out infinite;
+            z-index: 20;
+        }
+
+        .speech-bubble {
+            position: absolute;
+            top: -80px;
+            left: 0;
+            font-size: 1.1rem;
+            font-weight: bold;
+            background: #fff;
+            border: 2px solid var(--meryem-hijab);
+            padding: 8px 12px;
+            border-radius: 15px 15px 15px 5px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: say-love var(--anim-duration) ease-in-out infinite;
+            z-index: 20;
+            white-space: nowrap;
+        }
+
+        /* This is a pure CSS Heart shape */
+        .kiss-heart {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            top: 140px;
+            left: 50%;
+            opacity: 0;
+            transform: translateX(-50%) scale(0.5);
+            animation: heart-pulse var(--anim-duration) ease-in-out infinite;
+            z-index: 15;
+        }
+        .kiss-heart::before,
+        .kiss-heart::after {
+            content: '';
+            position: absolute;
+            left: 25px;
+            top: 0;
+            width: 25px;
+            height: 40px;
+            background: #ec407a;
+            border-radius: 25px 25px 0 0;
+            transform: rotate(-45deg);
+            transform-origin: 0 100%;
+        }
+        .kiss-heart::after {
+            left: 0;
+            transform: rotate(45deg);
+            transform-origin: 100% 100%;
+        }
+
+
+        /* --- 4. All The Animations --- */
+        
+        /* Amine Leans */
+        #amine {
+            animation: amine-lean var(--anim-duration) ease-in-out infinite;
+        }
+        @keyframes amine-lean {
+            0%, 20%, 80%, 100% { transform: translateX(0) rotate(-2deg); }
+            40%, 60% { transform: translateX(35px) rotate(6deg); }
+        }
+
+        /* Meryem Tilts */
+        #meryem {
+            animation: meryem-tilt var(--anim-duration) ease-in-out infinite;
+        }
+        @keyframes meryem-tilt {
+            0%, 20%, 80%, 100% { transform: translateX(0) rotate(2deg); }
+            40%, 60% { transform: translateX(-35px) rotate(-6deg); }
+        }
+
+        /* Eyelid Close */
+        @keyframes eye-blink {
+            0%, 35%, 65%, 100% { height: 0%; } /* Open */
+            40%, 60% { height: 100%; } /* Closed for the kiss */
+        }
+        
+        /* Kissing Mouth */
+        @keyframes mouth-kiss {
+            0%, 35%, 65%, 100% {
+                height: 5px; /* Smile */
+                border-radius: 0 0 15px 15px;
+                transform: translateX(0);
+            }
+            40%, 60% {
+                height: 8px; /* Pucker */
+                width: 8px;
+                border-radius: 50%;
+                transform: translateX(5px);
+            }
+        }
+
+        /* Smooch text pop */
+        @keyframes smooch-pop {
+            0%, 39%, 61%, 100% { opacity: 0; transform: translateX(-50%) scale(0.5); }
+            40% { opacity: 1; transform: translateX(-50%) scale(1.2); }
+            50% { opacity: 1; transform: translateX(-50%) scale(1); }
+            60% { opacity: 0; transform: translateX(-50%) scale(0.8); }
+        }
+        
+        /* Heart pulse */
+        @keyframes heart-pulse {
+            0%, 39%, 61%, 100% { opacity: 0; transform: translateX(-50%) scale(0.5); }
+            40% { opacity: 1; transform: translateX(-50%) scale(1.2); }
+            50% { opacity: 1; transform: translateX(-50%) scale(1); }
+            60% { opacity: 0; transform: translateX(-50%) scale(0.8); }
+        }
+
+        /* Speech bubble */
+        @keyframes say-love {
+            0%, 65%, 95%, 100% { opacity: 0; transform: translateY(20px); }
+            70% { opacity: 1; transform: translateY(0); }
+            90% { opacity: 1; transform: translateY(0); }
+        }
+
+    </style>
 </head>
 <body>
 
     <div class="stage">
         
         <div class="person" id="amine" data-name="Amine">
-            
-            <div class="character-image">
-                <div class="img-neutral"></div>
-                <div class="img-kissing"></div>
+            <div class="head">
+                <div class="hair"></div>
+                <div class="eye left">
+                    <div class="eyelid"></div>
+                </div>
+                <div class="eye right">
+                    <div class="eyelid"></div>
+                </div>
+                <div class="mouth"></div>
             </div>
-            
+            <div class="body"></div>
             <div class="speech-bubble">I LOVE YOU MY BABY!</div>
         </div>
 
         <div class="person" id="meryem" data-name="Meryem">
-            
-            <div class="character-image">
-                <div class="img-neutral"></div>
-                <div class="img-kissing"></div>
+            <div class="head">
+                <div class="hijab"></div>
+                <div class="eye left">
+                    <div class="eyelid"></div>
+                </div>
+                <div class="eye right">
+                    <div class="eyelid"></div>
+                </div>
+                <div class="mouth"></div>
             </div>
-
+            <div class="body"></div>
         </div>
         
         <div class="smooch-text">SMOOCH!</div>
